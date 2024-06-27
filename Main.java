@@ -1,18 +1,22 @@
 import java.util.concurrent.locks.ReentrantLock;
 
 import suru65.CustomerQueue.CustomerQueue;
+import suru65.QueueSimulator.QueueSimulator;
 
 public class Main {
 
     public static volatile boolean running = true;
 
     public static void main(String[] args) {
+      // QueueSimulator
+      QueueSimulator qs = new QueueSimulator();
+    
       // time for server
-      int a = 3, b=15;
+      int a = 60, b=300;
       // Queue size
-      int n = 10;
+      int n = 5;
       // Time for adder
-      int c1 = 5, c2 = 10;
+      int c1 = 20, c2 = 60;
       // Lock
       ReentrantLock rel =  new ReentrantLock();
       // Customer Queue
@@ -21,11 +25,14 @@ public class Main {
       // Task for server;
       Runnable task1 = () -> {
         while (running) {
-         obj.getNext();
+         int value = obj.getNext();
+
+         if(value == 1){qs.addTotalSerrvedCustomer();}
          
           try {
              long x =(long)Math.random()*(b-a) + a;
-             Thread.sleep(x*100);
+             if(value == 1){qs.addTotalTimeToSerrveCustomers(x*1000);}
+             Thread.sleep(x*1000);
           } catch (InterruptedException e) {
              e.printStackTrace();
           }
@@ -34,14 +41,31 @@ public class Main {
 
       // task for adder
       Runnable task2 = () -> {
-        while ((obj.queue.size() <= n) && running) {
+        while (running) {
+           
            boolean ans = rel.tryLock();
     
            if(ans){
+
+             qs.addTotalArrivedCustomer();
+
              // Adding new customer to the queue
              System.out.println("Adding a new customer to the \'Queue\'.");
              try {
-                obj.queue.add(1);
+                // Cheking if the queue is full or empty.
+                if(obj.queue.size() == n){
+
+                  qs.addTotalDepartsCustomer();
+
+                   try {
+                       long x =(long)Math.random()*(c2-c1) + c1;
+                       Thread.sleep(x*1000);
+                   } catch (InterruptedException e) {
+                        e.printStackTrace();
+                   }      
+                }else{
+                  obj.queue.add(1);
+                }
                 
              } catch (Exception e) {
                 e.printStackTrace();
@@ -50,7 +74,7 @@ public class Main {
                 // wait for a while
                 try {
                    long x =(long)Math.random()*(c2-c1) + c1;
-                   Thread.sleep(x*100);
+                   Thread.sleep(x*1000);
                 } catch (InterruptedException e) {
                    e.printStackTrace();
                 }
@@ -75,12 +99,15 @@ public class Main {
 
       // runiing threads for t seconds
       try {
-        Thread.sleep(60*1000);
+        Thread.sleep(60*5*1000);
       } catch (Exception e) {
         e.printStackTrace();
       }
 
+      // Killing the running threads.
       running = false;
+
+      qs.conclussion(0.5);
 
         
     }

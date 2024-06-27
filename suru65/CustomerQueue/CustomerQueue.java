@@ -17,7 +17,8 @@ public class CustomerQueue {
    }
    
    // Get the next Customer
-   public void getNext(){ 
+   public int getNext(){ 
+      int x = 0;
       boolean ans;
       
       if(queue.isEmpty()){
@@ -25,11 +26,12 @@ public class CustomerQueue {
       }else{
          ans = rel.tryLock();
       }
+
       if(ans)
       {
           try {
             System.out.println("Start : " + Thread.currentThread().getId());
-            int x = queue.poll();
+            x = queue.poll();
             System.out.println("From Thread : " + Thread.currentThread().getId() +" the item is : " + x);
             // Thread.sleep(800);
           } catch (Exception e) {
@@ -42,6 +44,8 @@ public class CustomerQueue {
       {
          System.out.println("Waiting : " + Thread.currentThread().getId());
       }
+
+      return x;
    }
 
 }
