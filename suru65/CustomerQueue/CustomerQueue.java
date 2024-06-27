@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class CustomerQueue {
    // Customers queue
-   public final Queue<Integer> queue = new LinkedList<>();
+   public  Queue<Integer> queue = new LinkedList<>();
 
    // Lock
    private ReentrantLock rel;
@@ -16,27 +16,22 @@ public class CustomerQueue {
       this.rel = rel;
    }
    
-   // push in queue
-   public void pushInQueue(){
-
-    for(int i = 0; i<10; i++){
-        queue.add(i+1);
-    }
-     
-   }
-
-   public void getNext(){
-      System.out.println("Start : " + Thread.currentThread().getId());
+   // Get the next Customer
+   public void getNext(){ 
+      boolean ans;
       
-      boolean ans = rel.tryLock();
-
-
+      if(queue.isEmpty()){
+         ans = false;
+      }else{
+         ans = rel.tryLock();
+      }
       if(ans)
       {
           try {
-             int x = queue.poll();
-             System.out.println("From Thread : " + Thread.currentThread().getId() +" the item is : " + x);
-            Thread.sleep(800);
+            System.out.println("Start : " + Thread.currentThread().getId());
+            int x = queue.poll();
+            System.out.println("From Thread : " + Thread.currentThread().getId() +" the item is : " + x);
+            // Thread.sleep(800);
           } catch (Exception e) {
             e.printStackTrace();
           } finally{
@@ -49,19 +44,5 @@ public class CustomerQueue {
       }
    }
 
-
-   // pop from queue
-   public void popFromQueue(){
-       while (!queue.isEmpty()) {
-           getNext();
-
-           try {
-            Thread.sleep(500);
-           } catch (Exception e) {
-            e.printStackTrace();
-           }
-
-       }
-   }
 }
 
