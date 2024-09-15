@@ -36,13 +36,6 @@ public class Main {
       // QueueSimulator
       QueueSimulator qs = new QueueSimulator();
     
-      // time for server
-      // int a = 60, b=300;
-      // Queue size
-      // int n = 5;
-      // Time for adder
-      // int c1 = 20, c2 = 60;
-      // Lock
       ReentrantLock rel =  new ReentrantLock();
       // Customer Queue
       CustomerQueue obj = new CustomerQueue(rel);
